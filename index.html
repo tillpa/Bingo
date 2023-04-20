@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, minimal-ui"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <title>Työaikaseuranta</title>
+    <link rel="apple-touch-icon" sizes="512x512" href="images/icons-512.png" />
+    <link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="manifest" href="manifest.json" />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule=""
+      src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"
+    ></script>
+  </head>
+  <body>
+    <header>
+      <h1>Bingo</h1>
+    </header>
+    <div class="wrapper">
+      <div class="wrapper-inner">
+        <div class="play">
+          <label for="play_bingo">Jouez en Bingo</label>
+          <input type="button" id="play_bingo" value="Jouez!" class="button" />
+        </div>
+
+        <div>
+          <p id="status"></p>
+        </div>
+        <div class="settings-chooser">
+          <div class="button" id="open-settings">Asetukset</div>
+        </div>
+        <!-- settings modaalimuodossa -->
+        <div id="modal-settings" class="settings">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="work-parameters">
+              <form>
+                <label for="name">Nimi</label>
+                <input
+                  type="text"
+                  name="Nimi"
+                  id="name"
+                  class="name"
+                  placeholder="Kirjoita nimesi"
+                /><br />
+                <label for="working-time-input">Työaika/pv</label>
+                <input
+                  type="time"
+                  name="Työaika"
+                  id="working-time-input"
+                  class="working-time-input"
+                  value="07:21"
+                /><br />
+                <label for="working-time-percent">Työaika-%</label>
+                <input
+                  type="number"
+                  id="working-time-percent"
+                  class="working-time-percent"
+                  name="Työaika-%"
+                  value="100"
+                  step="1"
+                  min="1"
+                  max="100"
+                /><br />
+                <div class="container">
+                  <label for="starting-saldo" class="working-time-label"
+                    >Alkusaldo</label
+                  >
+                  <select class="saldo__type">
+                    <option value="+" selected>+</option>
+                    <option value="-">-</option>
+                  </select>
+                  <input
+                    type="time"
+                    id="starting-saldo"
+                    class="working-time-saldo"
+                    value="00:00"
+                  /><br />
+                </div>
+                <input
+                  type="button"
+                  class="button"
+                  name="Tallenna"
+                  value="Tallenna"
+                  id="settings-submit"
+                />
+              </form>
+            </div>
+
+            <div class="logging-correction-button">
+              <button class="button" id="show-correction">
+                Korjaa kirjaus
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- end modal -->
+
+        <!-- Show the history -->
+        <div class="game_field">
+          <table class="table hidden">
+            <tbody>
+              <tr class="caption">
+                <th>Päivä</th>
+                <th>Sisään</th>
+                <th>Ulos</th>
+                <th>Työpäivä</th>
+                <th>Saldo</th>
+                <th>Oma aika</th>
+              </tr>
+
+              <!--
+        <tr>
+          <td>1.1.1970</td>
+          <td>08.12</td>
+          <td>15.34</td>
+          <td>7.21</td>
+          <td>3.23</td>
+          <td>0.20</td>
+        </tr>
+
+        -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
