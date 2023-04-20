@@ -170,41 +170,41 @@ form {
 }
 
 /* Table settings */
-.history {
+.game_field {
   /*max-width: 400px;*/
   margin-top: 20px;
   margin-bottom: 30px;
   overflow-x: auto;
 }
 
-.history-table {
+.table {
   border-collapse: collapse;
   width: 100%;
 }
 
-.history-table td,
-.history-tablen th {
+.table td,
+.tablen th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-.history-table tr:nth-child(even) {
+.table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.history-table tr:hover {
+.table tr:hover {
   background-color: #ddd;
 }
 
-.history-caption th {
+.caption th {
   padding-top: 6px;
   padding-bottom: 6px;
   text-align: center;
-  background-color: #e67300;
+  background-color: #22702e;
   color: white;
 }
 
-.history-sub-caption {
+.sub-caption {
   padding-top: 6px;
   padding-bottom: 6px;
   text-align: center;
