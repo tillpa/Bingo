@@ -13,7 +13,7 @@
       type="text/css"
     />
     <link type="text/css" rel="stylesheet" href="style.css" />
-    <title>Työaikaseuranta</title>
+    <title>Bingo</title>
     <link rel="apple-touch-icon" sizes="512x512" href="images/icons-512.png" />
     <link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link rel="manifest" href="manifest.json" />
@@ -31,7 +31,7 @@
       <h1>Bingo</h1>
     </header>
     <div class="wrapper">
-      <button class="share-button">
+      <button class="share-button hidden">
         <ion-icon name="share-social"></ion-icon>
       </button>
       <div class="wrapper-inner">
@@ -39,6 +39,23 @@
           <label for="play_bingo">Jouez en Bingo</label>
           <input type="button" id="play_bingo" value="Jouez!" class="button" />
         </div>
+
+        <!-- Game field -->
+        <div class="game_field hidden"></div>
+        <table class="table hidden">
+          <tbody>
+            <!--
+                    <tr></tr>
+                      <td>1.1.1970</td>
+                      <td>08.12</td>
+                      <td>15.34</td>
+                      <td>7.21</td>
+                      <td>3.23</td>
+                      <td>0.20</td>
+                    </tr>
+                  -->
+          </tbody>
+        </table>
 
         <div>
           <p id="status"></p>
@@ -59,25 +76,6 @@
                   id="name"
                   class="name"
                   placeholder="Kirjoita nimesi"
-                /><br />
-                <label for="working-time-input">Työaika/pv</label>
-                <input
-                  type="time"
-                  name="Työaika"
-                  id="working-time-input"
-                  class="working-time-input"
-                  value="07:21"
-                /><br />
-                <label for="working-time-percent">Työaika-%</label>
-                <input
-                  type="number"
-                  id="working-time-percent"
-                  class="working-time-percent"
-                  name="Työaika-%"
-                  value="100"
-                  step="1"
-                  min="1"
-                  max="100"
                 /><br />
                 <div class="container">
                   <label for="starting-saldo" class="working-time-label"
@@ -106,25 +104,6 @@
           </div>
         </div>
         <!-- end modal -->
-
-        <!-- Show the history -->
-        <div class="game_field">
-          <table class="table hidden">
-            <tbody>
-              <!--
-        <tr>
-          <td>1.1.1970</td>
-          <td>08.12</td>
-          <td>15.34</td>
-          <td>7.21</td>
-          <td>3.23</td>
-          <td>0.20</td>
-        </tr>
-
-        -->
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
     <script src="app.js"></script>

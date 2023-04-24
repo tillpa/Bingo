@@ -2,14 +2,35 @@ const debugging = false;
 
 const AppController = (function () {
   const date = new Date();
+  const data = [];
 
   if (debugging) {
     window.data = data;
   }
 
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
   return {
+    clearData: function () {
+      data.splice(0, data.length);
+    },
     guessNumbers: function () {
-      //something here
+      let i = 0;
+      while (i < 25) {
+        const number = getRandomInt(99);
+        if (!data.includes(number) && number > 0) {
+          data.push(number);
+          i++;
+        }
+      }
+      if (debugging) {
+        console.log("Generated numbers: " + data);
+      }
+    },
+    getNumbers: function () {
+      return data;
     },
   };
 })();
@@ -23,18 +44,54 @@ const UIController = (function () {
   const DOMStrings = {
     playButton: "#play_bingo",
     buttonSubmit: "#settings-submit",
-
     modal: "#modal-settings",
     modalButton: "#open-settings",
     modalClose: "close",
-    gameField: ".table",
+    gameField: ".game_field",
     settingsSubmit: "#settings-submit",
     shareButton: ".share-button",
+    table: ".table",
   };
+
+  function groupArr(data, n) {
+    var group = [];
+    for (var i = 0, j = 0; i < data.length; i++) {
+      if (i >= n && i % n === 0) j++;
+      group[j] = group[j] || [];
+      group[j].push(data[i]);
+    }
+    return group;
+  }
+
+  function clearTable() {
+    //remove old table, if present:
+    const table = document.querySelector("table");
+    if (table) {
+      return table.remove();
+    }
+  }
+
+  function changePlayButton() {
+    const button = document.querySelector(DOMStrings.playButton);
+    button.value = "Une fois encore!";
+  }
 
   return {
     renderNewGame: function () {
-      //Here some code.
+      clearTable();
+      changePlayButton();
+      const numbers = AppController.getNumbers();
+      const groupedNumbers = groupArr(numbers, 5);
+      const wrapper = document.querySelector(DOMStrings.gameField);
+      tableString = `<table class="table"><tbody>`;
+      console.log(wrapper.childNodes);
+      for (var n = 0; n < groupedNumbers.length; n++) {
+        const row = `<tr><td>${groupedNumbers[n][0]}</td><td>${groupedNumbers[n][1]}</td><td>${groupedNumbers[n][2]}</td><td>${groupedNumbers[n][3]}</td><td>${groupedNumbers[n][4]}</td></tr>`;
+        tableString += row;
+      }
+      tableString += "</tbody></table>";
+      wrapper.innerHTML = tableString;
+      wrapper.classList.remove("hidden");
     },
     getDOMStrings: function () {
       return DOMStrings;
@@ -160,19 +217,22 @@ const Controller = (function (AppController, UIController) {
 
   function startNewGame() {
     //1. guess new numbers
-    // 2. render an empty table
+    AppController.clearData();
+    AppController.guessNumbers();
+    // 2. render the table
+    UIController.renderNewGame();
     //3. get correct sound files
     //4. play sound files
+    //5. check, if vertical or horizontal row is checked (has to be clicked)
+    //6. Show hint, if row would have been checked.
   }
 
   return {
     init: function () {
       console.log("Application has started.");
       UIController.setModal();
-
       //loadData();
       setupEventListeners();
-
       regSW();
     },
   };
