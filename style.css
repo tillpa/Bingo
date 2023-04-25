@@ -56,6 +56,17 @@ ion-icon {
   margin-bottom: -5px;
 }
 
+.icon {
+  padding-right: 10px;
+}
+
+.heading {
+  height: 50px;
+  align-content: center;
+  display: flex;
+  justify-content: center;
+}
+
 .wrapper-inner {
   margin: 0 5%;
   padding-bottom: 40px;

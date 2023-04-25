@@ -113,13 +113,12 @@ const UIController = (function () {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  //TODO: stop playNextSounds function when new game is started
-  let newGame = false;
+  let newGame = true;
 
   const playNextSounds = (numbers, startingIndex) => {
     if (numbers.length > 0) {
       console.log("Current number " + numbers[startingIndex]);
-      console.log("New Game is " + newGame);
+      //console.log("New Game is " + newGame);
       const audio = new Audio();
       audio.src = `./numbers/fra-${numbers[startingIndex]}.mp3`;
       audio.currentTime = 0;
@@ -127,7 +126,7 @@ const UIController = (function () {
       audio2.src = `./numbers/fra-${numbers[startingIndex]}.mp3`;
       audio2.currentTime = 0;
       if (newGame) {
-        console.log("newGame is true 1");
+        //console.log("newGame is true 1");
         audio.pause();
         audio2.pause();
         return;
@@ -143,7 +142,7 @@ const UIController = (function () {
         //console.log("audio playing");
         await sleep(3000);
         if (newGame) {
-          console.log("newGame is true 2");
+          //console.log("newGame is true 2");
           audio.pause();
           audio2.pause();
           return;
@@ -326,7 +325,7 @@ const Controller = (function (AppController, UIController) {
 
   function startNewGame() {
     UIController.setNewGame();
-    console.log("newGame set to true");
+    //console.log("newGame set to true");
     //1. guess new numbers
     AppController.clearData();
     AppController.guessNumbers();
