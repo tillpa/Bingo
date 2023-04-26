@@ -4,6 +4,7 @@ const AppController = (function () {
   const date = new Date();
   const data = [];
   let currentNumber = 0;
+  const currentNumbers = [];
   const winRows = [0, 0, 0, 0, 0];
   const winColumns = [0, 0, 0, 0, 0];
 
@@ -50,6 +51,15 @@ const AppController = (function () {
     },
     getCurrentNumber: function () {
       return currentNumber;
+    },
+    getCurrentNumbers: function () {
+      return currentNumbers;
+    },
+    addCurrentNumber: function (number) {
+      currentNumbers.push(number);
+    },
+    clearCurrentNumbers: function () {
+      currentNumbers.splice(0, currentNumbers.length);
     },
     registerHit: function (id) {
       winColumns[id[1]]++;
@@ -150,6 +160,7 @@ const UIController = (function () {
       //console.log("audio2 playing");
       sleep(2000);
       AppController.setCurrentNumber(numbers[startingIndex]);
+      AppController.addCurrentNumber(numbers[startingIndex]);
       numbers.shift();
 
       audio2.addEventListener("ended", async function () {
@@ -183,6 +194,7 @@ const UIController = (function () {
 
   function registerCheckFunction() {
     const currentNumber = AppController.getCurrentNumber();
+    const calledNumbers = AppController.getCurrentNumbers();
     const clickedNumber = parseInt(this.innerHTML);
     const id = this.id.split("-");
     const classList = this.classList.value;
@@ -191,7 +203,8 @@ const UIController = (function () {
       console.log("is not success");
       this.classList.add("warning");
     }
-    if (clickedNumber === currentNumber) {
+    //if (clickedNumber === currentNumber) {
+    if (calledNumbers.indexOf(clickedNumber) >= 0) {
       this.classList.add("success");
       AppController.registerHit(id);
       this.removeEventListener("click", registerCheckFunction);
@@ -232,6 +245,7 @@ const UIController = (function () {
       changePlayButton();
       renderGameBoard();
       AppController.setCurrentNumber(0);
+      AppController.clearCurrentNumbers();
       renderStartButton();
     },
     getDOMStrings: function () {
