@@ -69,7 +69,7 @@
           <p id="status"></p>
         </div>
         <div class="settings-chooser hidden">
-          <div class="button" id="open-settings">Asetukset</div>
+          <div class="button" id="open-settings">Settings</div>
         </div>
         <!-- settings modaalimuodossa -->
         <div id="modal-settings" class="settings">
@@ -77,34 +77,19 @@
             <span class="close">&times;</span>
             <div class="work-parameters">
               <form>
-                <label for="name">Nimi</label>
+                <label for="name">Nom</label>
                 <input
                   type="text"
-                  name="Nimi"
+                  name="Nom"
                   id="name"
                   class="name"
-                  placeholder="Kirjoita nimesi"
+                  placeholder=""
                 /><br />
-                <div class="container">
-                  <label for="starting-saldo" class="working-time-label"
-                    >Alkusaldo</label
-                  >
-                  <select class="saldo__type">
-                    <option value="+" selected>+</option>
-                    <option value="-">-</option>
-                  </select>
-                  <input
-                    type="time"
-                    id="starting-saldo"
-                    class="working-time-saldo"
-                    value="00:00"
-                  /><br />
-                </div>
                 <input
                   type="button"
                   class="button"
-                  name="Tallenna"
-                  value="Tallenna"
+                  name="Save"
+                  value="Save"
                   id="settings-submit"
                 />
               </form>

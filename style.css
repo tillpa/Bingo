@@ -76,22 +76,6 @@ ion-icon {
   display: none !important;
 }
 
-.tyoaika {
-  border: 2px solid #e7e7e7;
-  margin: 10px 0px;
-  font-size: 18px;
-  color: inherit;
-  background-color: #fff;
-  margin-right: 10px;
-  font-weight: 300;
-  transition: border 0.3s;
-  text-align: center;
-  display: inline-block;
-  padding: 5px;
-  border-radius: 2px;
-  font-weight: 600;
-}
-
 .container {
   clear: both;
   height: 20px;
@@ -99,12 +83,7 @@ ion-icon {
   margin-bottom: 10px;
 }
 
-.working-time-input,
-.working-time-percent,
-.name,
-.saldo__type,
-.working-time-saldo,
-.correction-input {
+.name {
   border: 2px solid #e7e7e7;
   transition: border 0.3s;
   font-size: 18px;
@@ -118,32 +97,9 @@ ion-icon {
   font-family: "Open Sans", sans-serif;
 }
 
-.working-time-input {
-  width: 80px;
-}
-
-.working-time-label,
-.working-time-percent,
-.saldo__type {
-  clear: both;
-}
-
-.working-time-percent {
-  width: 55px;
-}
-
 .name {
   width: 150px;
   text-align: left;
-}
-
-.saldo__type {
-  margin-right: 0;
-}
-
-.working-time-saldo {
-  margin-left: 0;
-  width: 80px;
 }
 
 .button {
@@ -159,14 +115,7 @@ ion-icon {
   cursor: pointer;
   padding: 10px 12px;
   font-size: 20px;
-}
-
-.button {
   margin: 10px 0;
-}
-
-.tyoaika-button {
-  margin-bottom: 10px;
 }
 
 a {
@@ -182,7 +131,6 @@ form {
 
 /* Table settings */
 .game_field {
-  /*max-width: 400px;*/
   margin-top: 20px;
   margin-bottom: 30px;
   overflow-x: hidden;
@@ -190,6 +138,7 @@ form {
 
 .table {
   border-collapse: collapse;
+  margin: auto;
 }
 
 .table td,
@@ -271,17 +220,16 @@ form {
 }
 
 .warning {
-  padding: 10px;
   background-color: #ff6666;
-  border-radius: 5px;
 }
 
 .success {
   background-color: lightgreen;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  border-radius: 5px;
+}
+
+.clicked {
+  background-color: #555;
+  color: #ddd;
 }
 
 /* Logging corrections */
