@@ -1,9 +1,11 @@
-const debugging = false;
+const debugging = true;
 
 const AppController = (function () {
   const date = new Date();
   const data = [];
   let currentNumber = 0;
+  const winRows = [0, 0, 0, 0, 0];
+  const winColumns = [0, 0, 0, 0, 0];
 
   if (debugging) {
     window.data = data;
@@ -48,6 +50,14 @@ const AppController = (function () {
     },
     getCurrentNumber: function () {
       return currentNumber;
+    },
+    registerHit: function (id) {
+      winColumns[id[1]]++;
+      winRows[id[0]]++;
+      console.log(winRows + " " + winColumns);
+    },
+    checkWon: function () {
+      if (winColumns.indexOf(5) >= 0 || winRows.indexOf(5) >= 0) return true;
     },
   };
 })();
@@ -108,6 +118,11 @@ const UIController = (function () {
         : "Continuez!";
   }
 
+  function hideStartButton() {
+    const button = document.querySelector(DOMStrings.startButton);
+    button.classList.add("hidden");
+  }
+
   function sleep(ms) {
     //console.log("sleeping");
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -133,14 +148,14 @@ const UIController = (function () {
       }
       audio2.play();
       //console.log("audio2 playing");
-      sleep(1500);
+      sleep(2000);
       AppController.setCurrentNumber(numbers[startingIndex]);
       numbers.shift();
 
       audio2.addEventListener("ended", async function () {
         audio.play();
         //console.log("audio playing");
-        await sleep(3000);
+        await sleep(4000);
         if (newGame) {
           //console.log("newGame is true 2");
           audio.pause();
@@ -151,6 +166,63 @@ const UIController = (function () {
     }
   };
 
+  const renderGameBoard = () => {
+    const numbers = AppController.getNumbers();
+    const groupedNumbers = groupArr(numbers, 5);
+    const wrapper = document.querySelector(DOMStrings.gameField);
+    tableString = `<table class="table"><tbody>`;
+    console.log(wrapper.childNodes);
+    for (var n = 0; n < groupedNumbers.length; n++) {
+      const row = `<tr><td id="${n}-0">${groupedNumbers[n][0]}</td><td id="${n}-1">${groupedNumbers[n][1]}</td><td id="${n}-2">${groupedNumbers[n][2]}</td><td id="${n}-3">${groupedNumbers[n][3]}</td><td id="${n}-4">${groupedNumbers[n][4]}</td></tr>`;
+      tableString += row;
+    }
+    tableString += "</tbody></table>";
+    wrapper.innerHTML = tableString;
+    wrapper.classList.remove("hidden");
+  };
+
+  function registerCheckFunction() {
+    const currentNumber = AppController.getCurrentNumber();
+    const clickedNumber = parseInt(this.innerHTML);
+    const id = this.id.split("-");
+    const classList = this.classList.value;
+    console.log(classList === "success");
+    if (!classList === "success" || classList === "") {
+      console.log("is not success");
+      this.classList.add("warning");
+    }
+    if (clickedNumber === currentNumber) {
+      this.classList.add("success");
+      AppController.registerHit(id);
+      this.removeEventListener("click", registerCheckFunction);
+      if (AppController.checkWon()) {
+        stopGame();
+      }
+    }
+  }
+
+  function stopGame() {
+    newGame = true;
+    const announcement = document.querySelector("#status");
+    announcement.innerHTML = '<span class="won">Vouz avez gagné!</span>';
+    hideStartButton();
+    const sound = new Audio();
+    sound.src = "./numbers/mixkit-ethereal-fairy-win-sound-2019.mp3";
+    sound.currentTime = 0;
+    sound.play();
+    const tableCells = document.querySelectorAll("td");
+    for (var i = 0; i < tableCells.length; i++) {
+      tableCells[i].removeEventListener("click", registerCheckFunction);
+    }
+  }
+
+  function addClickToTableCell() {
+    const tableCells = document.querySelectorAll("td");
+    for (var i = 0; i < tableCells.length; i++) {
+      tableCells[i].addEventListener("click", registerCheckFunction);
+    }
+  }
+
   return {
     setNewGame: function () {
       newGame = true;
@@ -158,18 +230,7 @@ const UIController = (function () {
     renderNewGame: function () {
       clearTable();
       changePlayButton();
-      const numbers = AppController.getNumbers();
-      const groupedNumbers = groupArr(numbers, 5);
-      const wrapper = document.querySelector(DOMStrings.gameField);
-      tableString = `<table class="table"><tbody>`;
-      console.log(wrapper.childNodes);
-      for (var n = 0; n < groupedNumbers.length; n++) {
-        const row = `<tr><td>${groupedNumbers[n][0]}</td><td>${groupedNumbers[n][1]}</td><td>${groupedNumbers[n][2]}</td><td>${groupedNumbers[n][3]}</td><td>${groupedNumbers[n][4]}</td></tr>`;
-        tableString += row;
-      }
-      tableString += "</tbody></table>";
-      wrapper.innerHTML = tableString;
-      wrapper.classList.remove("hidden");
+      renderGameBoard();
       AppController.setCurrentNumber(0);
       renderStartButton();
     },
@@ -218,25 +279,21 @@ const UIController = (function () {
     announceNumber: function () {
       if (newGame === true) {
         newGame = false;
-        //const numbers = [3, 6, 9, 44];
         const numbers = AppController.guessAnnouncingNumbers();
+        if (debugging) {
+          window.numbers = numbers;
+        }
         const currentIndex =
           AppController.getCurrentNumber() === 0
             ? 0
             : numbers.indexOf(AppController.getCurrentNumber());
-        // console.log(
-        //   `newGame is true, current Number is ${currentIndex}, type is ${typeof currentIndex}`
-        // );
-        //console.log(`current number ${numbers[currentIndex]}`);
-
         changeStartButton();
+        //3. register click for fields:
+        addClickToTableCell();
         return playNextSounds(numbers, currentIndex);
       } else {
         newGame = true;
         changeStartButton();
-        // console.log(
-        //   `Newgame is false, current number is ${AppController.getCurrentNumber()}`
-        // );
       }
     },
   };
@@ -272,10 +329,7 @@ const Controller = (function (AppController, UIController) {
           window.location.href.replace(/^http:/, "https:")
         );
       } else {
-        logError(
-          "Error: You need to use a browser that supports this draft " +
-            "proposal."
-        );
+        logError("Error: You need to use a browser that supports web sharing.");
         //hide button, if not supported
         document.querySelector(DOM.shareButton).classList.add("hidden");
       }
@@ -295,7 +349,7 @@ const Controller = (function (AppController, UIController) {
   function regSW() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
-        .register("/Tyo-aikaApp/sw.js")
+        .register("/Bingo/sw.js")
         .then(function (reg) {
           if (reg.installing) {
             console.log("Service worker installing");
@@ -311,18 +365,6 @@ const Controller = (function (AppController, UIController) {
     }
   }
 
-  var loadData = function () {
-    // 1. Load data from local storage
-    var storedData = AppController.getStoredData();
-
-    if (storedData) {
-      // 2. insert the saved data into local storage
-      AppController.updateData(storedData);
-      // 3. update status line
-      UIController.status();
-    }
-  };
-
   function startNewGame() {
     UIController.setNewGame();
     //console.log("newGame set to true");
@@ -331,8 +373,6 @@ const Controller = (function (AppController, UIController) {
     AppController.guessNumbers();
     // 2. render the table
     UIController.renderNewGame();
-    //3. get correct sound files
-    //4. play sound files
 
     //5. check, if vertical or horizontal row is checked (has to be clicked)
     //6. Show hint, if row would have been checked.
