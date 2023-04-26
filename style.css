@@ -21,10 +21,25 @@ h1 {
   color: white;
 }
 
+h2 {
+  margin-top: 20px;
+}
+
+p {
+  font-size: small;
+}
+
 .wrapper {
   align-content: center;
   background-color: #f0f0f5;
   max-width: 600px;
+  margin: auto;
+  padding-top: 20px;
+}
+
+footer {
+  max-width: 600px;
+  align-content: center;
   margin: auto;
 }
 
@@ -116,10 +131,11 @@ ion-icon {
   padding: 10px 12px;
   font-size: 20px;
   margin: 10px 0;
+  margin-right: 20px;
 }
 
 a {
-  color: white;
+  color: rgb(47, 51, 8);
   text-decoration: none;
 }
 
@@ -221,15 +237,21 @@ form {
 
 .warning {
   background-color: #ff6666;
+  color: #414141;
 }
 
 .success {
   background-color: lightgreen;
 }
 
-.clicked {
-  background-color: #555;
-  color: #ddd;
+.won {
+  background-color: rgb(243, 145, 145);
+  color: darkred;
+  padding: 15px;
+}
+
+#status {
+  text-align: center;
 }
 
 /* Logging corrections */
