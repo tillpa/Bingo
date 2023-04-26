@@ -1,4 +1,4 @@
-const debugging = true;
+const debugging = false;
 
 const AppController = (function () {
   const date = new Date();
@@ -64,7 +64,9 @@ const AppController = (function () {
     registerHit: function (id) {
       winColumns[id[1]]++;
       winRows[id[0]]++;
-      console.log(winRows + " " + winColumns);
+      if (debugging) {
+        console.log(winRows + " " + winColumns);
+      }
     },
     checkWon: function () {
       if (winColumns.indexOf(5) >= 0 || winRows.indexOf(5) >= 0) return true;
@@ -134,7 +136,6 @@ const UIController = (function () {
   }
 
   function sleep(ms) {
-    //console.log("sleeping");
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
@@ -142,8 +143,10 @@ const UIController = (function () {
 
   const playNextSounds = (numbers, startingIndex) => {
     if (numbers.length > 0) {
-      console.log("Current number " + numbers[startingIndex]);
-      //console.log("New Game is " + newGame);
+      if (debugging) {
+        console.log("Current number " + numbers[startingIndex]);
+      }
+
       const audio = new Audio();
       audio.src = `./numbers/fra-${numbers[startingIndex]}.mp3`;
       audio.currentTime = 0;
@@ -151,13 +154,11 @@ const UIController = (function () {
       audio2.src = `./numbers/fra-${numbers[startingIndex]}.mp3`;
       audio2.currentTime = 0;
       if (newGame) {
-        //console.log("newGame is true 1");
         audio.pause();
         audio2.pause();
         return;
       }
       audio2.play();
-      //console.log("audio2 playing");
       sleep(2000);
       AppController.setCurrentNumber(numbers[startingIndex]);
       AppController.addCurrentNumber(numbers[startingIndex]);
@@ -165,10 +166,8 @@ const UIController = (function () {
 
       audio2.addEventListener("ended", async function () {
         audio.play();
-        //console.log("audio playing");
         await sleep(4000);
         if (newGame) {
-          //console.log("newGame is true 2");
           audio.pause();
           audio2.pause();
           return;
@@ -182,7 +181,6 @@ const UIController = (function () {
     const groupedNumbers = groupArr(numbers, 5);
     const wrapper = document.querySelector(DOMStrings.gameField);
     tableString = `<table class="table"><tbody>`;
-    console.log(wrapper.childNodes);
     for (var n = 0; n < groupedNumbers.length; n++) {
       const row = `<tr><td id="${n}-0">${groupedNumbers[n][0]}</td><td id="${n}-1">${groupedNumbers[n][1]}</td><td id="${n}-2">${groupedNumbers[n][2]}</td><td id="${n}-3">${groupedNumbers[n][3]}</td><td id="${n}-4">${groupedNumbers[n][4]}</td></tr>`;
       tableString += row;
@@ -193,17 +191,15 @@ const UIController = (function () {
   };
 
   function registerCheckFunction() {
-    const currentNumber = AppController.getCurrentNumber();
+    //const currentNumber = AppController.getCurrentNumber();
+    //TODO: use currentNumber to show hint
     const calledNumbers = AppController.getCurrentNumbers();
     const clickedNumber = parseInt(this.innerHTML);
     const id = this.id.split("-");
     const classList = this.classList.value;
-    console.log(classList === "success");
     if (!classList === "success" || classList === "") {
-      console.log("is not success");
       this.classList.add("warning");
     }
-    //if (clickedNumber === currentNumber) {
     if (calledNumbers.indexOf(clickedNumber) >= 0) {
       this.classList.add("success");
       AppController.registerHit(id);
@@ -381,15 +377,11 @@ const Controller = (function (AppController, UIController) {
 
   function startNewGame() {
     UIController.setNewGame();
-    //console.log("newGame set to true");
-    //1. guess new numbers
+    //Guess new numbers
     AppController.clearData();
     AppController.guessNumbers();
     // 2. render the table
     UIController.renderNewGame();
-
-    //5. check, if vertical or horizontal row is checked (has to be clicked)
-    //6. Show hint, if row would have been checked.
   }
 
   return {
