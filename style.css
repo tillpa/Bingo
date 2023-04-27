@@ -236,18 +236,27 @@ form {
 }
 
 .warning {
-  background-color: #ff6666;
+  background-color: #ff6666 !important;
   color: #414141;
 }
 
 .success {
-  background-color: lightgreen;
+  background-color: lightgreen !important;
+  cursor: default;
 }
 
 .won {
   background-color: rgb(243, 145, 145);
   color: darkred;
   padding: 15px;
+}
+
+.game-over {
+  cursor: default !important;
+}
+
+.game-over:hover {
+  background-color: unset;
 }
 
 #status {
