@@ -1,19 +1,29 @@
 const debugging = false;
 
 const AppController = (function () {
-  const date = new Date();
   const data = [];
+  const announcingNumbers = [];
   let currentNumber = 0;
+  let nextNumber = 0;
   const currentNumbers = [];
   const winRows = [0, 0, 0, 0, 0];
   const winColumns = [0, 0, 0, 0, 0];
 
   if (debugging) {
     window.data = data;
+    //window.winRows = winRows;
+    //window.winColumns = winColumns;
   }
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
+  }
+
+  function clearHits() {
+    for (var i = 0; i < 5; i++) {
+      winColumns[i] = 0;
+      winRows[i] = 0;
+    }
   }
 
   return {
@@ -29,25 +39,37 @@ const AppController = (function () {
           i++;
         }
       }
-      if (debugging) {
-        console.log("Generated numbers: " + data);
-      }
     },
     getNumbers: function () {
       return data;
     },
     guessAnnouncingNumbers: function () {
-      const playData = [];
-      while (playData.length < 98) {
+      //first clear:
+      announcingNumbers.splice(0, announcingNumbers.length);
+      //clear also Hit data:
+      clearHits();
+      //then guess new numbers
+      while (announcingNumbers.length < 98) {
         const number = getRandomInt(99);
-        if (!playData.includes(number) && number > 0) {
-          playData.push(number);
+        if (!announcingNumbers.includes(number) && number > 0) {
+          announcingNumbers.push(number);
+        }
+        if (debugging) {
+          console.log("Generated numbers: " + announcingNumbers);
         }
       }
-      return playData;
+    },
+    getAnnouncingNumbers: function () {
+      return announcingNumbers;
     },
     setCurrentNumber: function (number) {
       currentNumber = number;
+    },
+    setNextNumber: function (number) {
+      nextNumber = number;
+    },
+    getNextNumber: function () {
+      return nextNumber;
     },
     getCurrentNumber: function () {
       return currentNumber;
@@ -62,8 +84,12 @@ const AppController = (function () {
       currentNumbers.splice(0, currentNumbers.length);
     },
     registerHit: function (id) {
-      winColumns[id[1]]++;
-      winRows[id[0]]++;
+      if (debugging) {
+        console.log(id);
+        console.log(winColumns);
+      }
+      winColumns[parseInt(id[1])]++;
+      winRows[parseInt(id[0])]++;
       if (debugging) {
         console.log(winRows + " " + winColumns);
       }
@@ -75,6 +101,10 @@ const AppController = (function () {
 })();
 
 const UIController = (function () {
+  //Used when creating a new game with #play_bingo button
+  let newGame = true;
+  //Used when starting and stopping current game
+  let gameRunning = false;
   const nodelistForEach = function (list, callback) {
     for (var i = 0; i < list.length; i++) {
       callback(list[i], i);
@@ -111,9 +141,16 @@ const UIController = (function () {
     }
   }
 
+  function cleearWon() {
+    const announcement = document.querySelector("#status");
+    if (announcement.children.length > 0) {
+      announcement.childNodes[0].remove();
+    }
+  }
+
   function changePlayButton() {
     const button = document.querySelector(DOMStrings.playButton);
-    button.value = "Une fois encore!";
+    button.value = "Encore une fois!";
   }
 
   function renderStartButton() {
@@ -139,8 +176,6 @@ const UIController = (function () {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  let newGame = true;
-
   const playNextSounds = (numbers, startingIndex) => {
     if (numbers.length > 0) {
       if (debugging) {
@@ -153,7 +188,7 @@ const UIController = (function () {
       const audio2 = new Audio();
       audio2.src = `./numbers/fra-${numbers[startingIndex]}.mp3`;
       audio2.currentTime = 0;
-      if (newGame) {
+      if (!gameRunning) {
         audio.pause();
         audio2.pause();
         return;
@@ -161,13 +196,16 @@ const UIController = (function () {
       audio2.play();
       sleep(2000);
       AppController.setCurrentNumber(numbers[startingIndex]);
+      AppController.setNextNumber(
+        numbers.length < startingIndex + 1 ? numbers[startingIndex + 1] : 0
+      );
       AppController.addCurrentNumber(numbers[startingIndex]);
       numbers.shift();
 
       audio2.addEventListener("ended", async function () {
         audio.play();
         await sleep(4000);
-        if (newGame) {
+        if (!gameRunning) {
           audio.pause();
           audio2.pause();
           return;
@@ -196,12 +234,16 @@ const UIController = (function () {
     const calledNumbers = AppController.getCurrentNumbers();
     const clickedNumber = parseInt(this.innerHTML);
     const id = this.id.split("-");
+    if (debugging) {
+      console.log(id);
+    }
     const classList = this.classList.value;
     if (!classList === "success" || classList === "") {
       this.classList.add("warning");
     }
     if (calledNumbers.indexOf(clickedNumber) >= 0) {
       this.classList.add("success");
+      this.classList.remove("warning");
       AppController.registerHit(id);
       this.removeEventListener("click", registerCheckFunction);
       if (AppController.checkWon()) {
@@ -212,6 +254,10 @@ const UIController = (function () {
 
   function stopGame() {
     newGame = true;
+    gameRunning = false;
+    if (debugging) {
+      console.log("Announced numbers: " + AppController.getCurrentNumbers());
+    }
     const announcement = document.querySelector("#status");
     announcement.innerHTML = '<span class="won">Vouz avez gagné!</span>';
     hideStartButton();
@@ -222,6 +268,8 @@ const UIController = (function () {
     const tableCells = document.querySelectorAll("td");
     for (var i = 0; i < tableCells.length; i++) {
       tableCells[i].removeEventListener("click", registerCheckFunction);
+      //tableCells[i].style.cursor = "default";
+      tableCells[i].classList.add("game-over");
     }
   }
 
@@ -238,6 +286,7 @@ const UIController = (function () {
     },
     renderNewGame: function () {
       clearTable();
+      cleearWon();
       changePlayButton();
       renderGameBoard();
       AppController.setCurrentNumber(0);
@@ -248,6 +297,7 @@ const UIController = (function () {
       return DOMStrings;
     },
     setModal: function () {
+      //Keep here if there are any settings to be implemented
       // Get the modal
       let modal = document.querySelector(DOMStrings.modal);
 
@@ -289,21 +339,39 @@ const UIController = (function () {
     announceNumber: function () {
       if (newGame === true) {
         newGame = false;
-        const numbers = AppController.guessAnnouncingNumbers();
-        if (debugging) {
-          window.numbers = numbers;
-        }
-        const currentIndex =
-          AppController.getCurrentNumber() === 0
-            ? 0
-            : numbers.indexOf(AppController.getCurrentNumber());
-        changeStartButton();
-        //3. register click for fields:
+        AppController.guessAnnouncingNumbers();
+        //register click for fields:
         addClickToTableCell();
-        return playNextSounds(numbers, currentIndex);
-      } else {
-        newGame = true;
+      }
+      const numbers = AppController.getAnnouncingNumbers();
+      if (debugging) {
+        window.numbers = numbers;
+      }
+      if (gameRunning) {
+        if (debugging) {
+          console.log("Gamerunning was true, changed to false");
+        }
+        gameRunning = false;
         changeStartButton();
+      } else if (!gameRunning) {
+        if (debugging) {
+          console.log("Gamerunning was false, changed to true");
+        }
+
+        gameRunning = true;
+        if (debugging) {
+          console.log(`Current number is ${AppController.getNextNumber()}`);
+          console.log(
+            `Guessed numbers are ${AppController.getAnnouncingNumbers()}`
+          );
+        }
+
+        const currentIndex =
+          AppController.getNextNumber() === 0
+            ? 0
+            : numbers.indexOf(AppController.getNextNumber());
+        changeStartButton();
+        return playNextSounds(numbers, currentIndex);
       }
     },
   };
