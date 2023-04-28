@@ -188,18 +188,22 @@ const UIController = (function () {
       const audio2 = new Audio();
       audio2.src = `./numbers/fra-${numbers[startingIndex]}.mp3`;
       audio2.currentTime = 0;
+      audio.load();
+      audio2.load();
+      audio2.play();
       if (!gameRunning) {
         audio.pause();
         audio2.pause();
         return;
       }
-      audio2.play();
-      sleep(2000);
       AppController.setCurrentNumber(numbers[startingIndex]);
       AppController.setNextNumber(
         numbers.length < startingIndex + 1 ? numbers[startingIndex + 1] : 0
       );
+      //Keep track of numbers that have been called, so the player
+      // can click them also afterwards:
       AppController.addCurrentNumber(numbers[startingIndex]);
+      //remove current number from numbers:
       numbers.shift();
 
       audio2.addEventListener("ended", async function () {
