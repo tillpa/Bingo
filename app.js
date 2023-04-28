@@ -383,6 +383,26 @@ const UIController = (function () {
 
 //Main app
 const Controller = (function (AppController, UIController) {
+  //Share button
+  const registerShare = function () {
+    document
+      .querySelector(DOM.shareButton)
+      .addEventListener("click", UIController.webShare);
+
+    if (navigator.share === undefined) {
+      if (window.location.protocol === "http:") {
+        // navigator.share() is only available in secure contexts.
+        window.location.replace(
+          window.location.href.replace(/^http:/, "https:")
+        );
+      } else {
+        logError("Error: You need to use a browser that supports web sharing.");
+        //hide button, if not supported
+        document.querySelector(DOM.shareButton).classList.add("hidden");
+      }
+    }
+  };
+
   const setupEventListeners = function () {
     //call the function from UIController
     var DOM = UIController.getDOMStrings();
@@ -400,22 +420,8 @@ const Controller = (function (AppController, UIController) {
     document.querySelector(DOM.settingsSubmit);
     //.addEventListener("click", UIController.updateSettings);
 
-    //Share button
-    document.querySelector(DOM.shareButton);
-    //.addEventListener("click", UIController.webShare);
-
-    if (navigator.share === undefined) {
-      if (window.location.protocol === "http:") {
-        // navigator.share() is only available in secure contexts.
-        window.location.replace(
-          window.location.href.replace(/^http:/, "https:")
-        );
-      } else {
-        logError("Error: You need to use a browser that supports web sharing.");
-        //hide button, if not supported
-        document.querySelector(DOM.shareButton).classList.add("hidden");
-      }
-    }
+    //Don't need share button at the moment
+    //registerShare();
   };
 
   //error function for webshare function
