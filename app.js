@@ -207,13 +207,20 @@ const UIController = (function () {
       numbers.shift();
 
       audio2.addEventListener("ended", async function () {
-        audio.play();
-        await sleep(4000);
         if (!gameRunning) {
           audio.pause();
           audio2.pause();
           return;
-        } else return playNextSounds(numbers, startingIndex);
+        }
+        audio.play();
+        audio.addEventListener("ended", async function () {
+          //await sleep(4000);
+          if (!gameRunning) {
+            audio.pause();
+            audio2.pause();
+            return;
+          } else return playNextSounds(numbers, startingIndex);
+        });
       });
     }
   };
