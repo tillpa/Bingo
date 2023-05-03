@@ -196,6 +196,10 @@ const UIController = (function () {
         audio2.pause();
         return;
       }
+      const silence = new Audio();
+      silence.src = "./numbers/silence.mp3";
+      silence.currentTime = 0;
+      silence.load();
       AppController.setCurrentNumber(numbers[startingIndex]);
       AppController.setNextNumber(
         numbers.length < startingIndex + 1 ? numbers[startingIndex + 1] : 0
@@ -210,17 +214,22 @@ const UIController = (function () {
         if (!gameRunning) {
           audio.pause();
           audio2.pause();
+          audio.srcObject = null;
+          audio2.srcObject = null;
           return;
         }
         audio.play();
         audio.addEventListener("ended", async function () {
-          await sleep(900);
-          await sleep(900);
-          if (!gameRunning) {
-            audio.pause();
-            audio2.pause();
-            return;
-          } else return playNextSounds(numbers, startingIndex);
+          silence.play();
+          silence.addEventListener("ended", async function () {
+            if (!gameRunning) {
+              audio.pause();
+              audio2.pause();
+              audio.srcObject = null;
+              audio2.srcObject = null;
+              return;
+            } else return playNextSounds(numbers, startingIndex);
+          });
         });
       });
     }
