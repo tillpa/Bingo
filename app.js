@@ -214,7 +214,8 @@ const UIController = (function () {
         }
         audio.play();
         audio.addEventListener("ended", async function () {
-          await sleep(4000);
+          await sleep(900);
+          await sleep(900);
           if (!gameRunning) {
             audio.pause();
             audio2.pause();
